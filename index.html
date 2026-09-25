@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pemilihan Ketua & Wakil Ketua OSIS</title>
+<style>
+  :root{
+    --navy:#0f2748; --navy2:#173a6b; --gold:#e0a52c; --bg:#f4f6fb;
+    --card:#ffffff; --text:#16233a; --muted:#64748b; --green:#1f8a54; --red:#c0392b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);}
+  header{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:22px 20px;text-align:center;}
+  header h1{margin:0;font-size:1.3rem;letter-spacing:.5px;}
+  header p{margin:4px 0 0;opacity:.8;font-size:.85rem;}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 16px 60px;}
+  .card{background:var(--card);border-radius:14px;box-shadow:0 4px 18px rgba(15,39,72,.08);padding:28px;}
+  .center{display:flex;justify-content:center;align-items:center;min-height:60vh;}
+  input[type=text]{width:100%;padding:12px 14px;border:1px solid #d7dee8;border-radius:8px;font-size:1rem;margin-top:6px;}
+  label{font-weight:600;font-size:.9rem;color:var(--navy);}
+  .field{margin-bottom:16px;}
+  button{cursor:pointer;font-family:inherit;}
+  .btn-primary{background:var(--navy);color:#fff;border:none;padding:13px 20px;border-radius:8px;font-size:1rem;font-weight:600;width:100%;}
+  .btn-primary:hover{background:var(--navy2);}
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px;}
+  @media(max-width:600px){.menu-grid{grid-template-columns:1fr;}}
+  .menu-btn{background:var(--card);border:2px solid var(--navy);border-radius:14px;padding:28px 16px;text-align:center;font-size:1.05rem;font-weight:700;color:var(--navy);}
+  .menu-btn.done{border-color:var(--green);color:var(--green);background:#eafaf1;cursor:default;}
+  .menu-btn .sub{display:block;font-weight:400;font-size:.82rem;color:var(--muted);margin-top:6px;}
+  .menu-btn.done .sub{color:var(--green);}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .who{font-size:.9rem;color:var(--muted);}
+  .logout-link{background:none;border:none;color:var(--red);font-weight:600;font-size:.85rem;text-decoration:underline;}
+  .cand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;margin-top:18px;}
+  .cand-card{background:#fff;border:1px solid #e3e8f0;border-radius:12px;padding:16px;text-align:center;}
+  .avatar{width:96px;height:96px;border-radius:50%;margin:0 auto 10px;object-fit:cover;background:linear-gradient(135deg,var(--navy),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.6rem;}
+  .cand-name{font-weight:700;margin:4px 0 2px;}
+  .cand-kelas{font-size:.82rem;color:var(--muted);margin-bottom:12px;}
+  .btn-pilih{background:var(--gold);border:none;color:var(--navy);font-weight:700;padding:9px 16px;border-radius:7px;width:100%;}
+  .btn-pilih:hover{filter:brightness(1.05);}
+  .back-link{background:none;border:none;color:var(--navy);font-weight:600;margin-bottom:6px;}
+  .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;}
+  .modal{background:#fff;border-radius:14px;padding:26px;max-width:340px;width:100%;text-align:center;}
+  .modal h3{margin:0 0 10px;color:var(--navy);}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .modal-actions button{flex:1;padding:11px;border-radius:8px;border:none;font-weight:700;}
+  .btn-yes{background:var(--green);color:#fff;}
+  .btn-no{background:#e5e9f0;color:var(--text);}
+  .hint{font-size:.8rem;color:var(--muted);margin-top:4px;}
+  .final-box{text-align:center;padding:20px 0;}
+  .final-box h2{color:var(--green);}
+  .err{color:var(--red);font-size:.85rem;margin-top:6px;min-height:18px;}
+  .hidden{display:none !important;}
+  .loading{text-align:center;color:var(--muted);padding:30px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="text-align: center;">
+  <img src="https://i.imgur.com/6f4IQwT.png" style="width: 100px; height: auto;">
+</div>
+  <h1>Pemilihan Ketua &amp; Wakil Ketua OSIS</h1>
+  <h1>SMP NEGERI 1 JETIS MOJOKERTO</h1>
+  <p>Sistem pemungutan suara online resmi siswa</p>
+</header>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div id="screen-login" class="center">
+    <div class="card" style="max-width:380px;width:100%;">
+      <h2 style="margin-top:0;color:var(--navy);">Login Pemilih</h2>
+      <div class="field">
+        <label>Nama Lengkap</label>
+        <input type="text" id="inpNama" placeholder="Contoh: Andi Saputra">
+      </div>
+      <div class="field">
+        <label>Kelas / Jabatan</label>
+        <input type="text" id="inpKelas" placeholder="Contoh: 7 A">
+      </div>
+      <button class="btn-primary" onclick="login()">Login</button>
+      <div class="err" id="loginErr"></div>
+    </div>
+  </div>
+
+  <!-- MENU UTAMA -->
+  <div id="screen-menu" class="hidden">
+    <div class="topbar">
+      <div class="who">Login sebagai <b id="whoName"></b> — <span id="whoKelas"></span></div>
+      <button class="logout-link" onclick="logout()">Keluar</button>
+    </div>
+    <div class="card">
+      <h2 style="margin-top:0;color:var(--navy);">Silakan Memilih</h2>
+      <p class="hint">Setiap siswa wajib memilih 1 Ketua OSIS dan 1 Wakil Ketua OSIS. Pilihan tidak dapat diubah setelah dikonfirmasi.</p>
+      <div class="menu-grid">
+        <button class="menu-btn" id="btnKetua" onclick="openCandidates('ketua')">
+          🎓 Pilih Ketua OSIS
+          <span class="sub" id="subKetua">Belum memilih</span>
+        </button>
+        <button class="menu-btn" id="btnWakil" onclick="openCandidates('wakil')">
+          🤝 Pilih Wakil Ketua OSIS
+          <span class="sub" id="subWakil">Belum memilih</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAFTAR KANDIDAT -->
+  <div id="screen-candidates" class="hidden">
+    <button class="back-link" onclick="showMenu()">&larr; Kembali ke menu</button>
+    <div class="card">
+      <h2 id="candTitle" style="margin-top:0;color:var(--navy);"></h2>
+      <div id="candList" class="cand-grid"></div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- MODAL KONFIRMASI -->
+<div id="modal" class="modal-bg hidden">
+  <div class="modal">
+    <h3>Konfirmasi Pilihan</h3>
+    <p id="modalText"></p>
+    <div class="modal-actions">
+      <button class="btn-no" onclick="closeModal()">Batalkan</button>
+      <button class="btn-yes" onclick="confirmVote()">Ya, Saya Yakin</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SUKSES -->
+<div id="modalSuccess" class="modal-bg hidden">
+  <div class="modal">
+    <h3>✅ Berhasil</h3>
+    <p>Suara Anda sudah masuk. Terima kasih!</p>
+    <div class="modal-actions">
+      <button class="btn-yes" style="flex:none;width:100%;" onclick="closeSuccessModal()">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL WAJIB LOGOUT -->
+<div id="modalLogout" class="modal-bg hidden">
+  <div class="modal">
+    <h3>🎉 Pemilihan Selesai</h3>
+    <p>Anda telah menyelesaikan pemilihan Ketua dan Wakil Ketua OSIS. Silakan logout sekarang.</p>
+    <div class="modal-actions">
+      <button class="btn-yes" style="flex:none;width:100%;" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA ====== */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzebaLrWWsP3QSTSgcE7uYIkRWgSjlQLSr92Qo0bRyiz9BgfTC_hYx-QlsXX2yjkOPIHQ/exec";
+/* ================================================================ */
+
+let user = null;           // {nama, kelas}
+let voteStatus = { votedKetua:false, votedWakil:false };
+let currentType = null;    // 'ketua' | 'wakil'
+let pendingCandidate = null;
+
+function apiGet(params){
+  const url = GAS_URL + "?" + new URLSearchParams(params).toString();
+  return fetch(url).then(r => r.json());
+}
+
+function show(id){
+  ["screen-login","screen-menu","screen-candidates"].forEach(s=>{
+    document.getElementById(s).classList.toggle("hidden", s!==id);
+  });
+}
+
+async function login(){
+  const nama = document.getElementById("inpNama").value.trim();
+  const kelas = document.getElementById("inpKelas").value.trim();
+  const errEl = document.getElementById("loginErr");
+  errEl.textContent = "";
+  if(!nama || !kelas){
+    errEl.textContent = "Nama lengkap dan kelas wajib diisi.";
+    return;
+  }
+  if(GAS_URL.indexOf("PASTE_URL") !== -1){
+    errEl.textContent = "GAS_URL belum diisi oleh admin. Lihat komentar di kode index.html.";
+    return;
+  }
+  user = { nama, kelas };
+  localStorage.setItem("osis_user", JSON.stringify(user));
+  await refreshStatus();
+  renderMenu();
+  show("screen-menu");
+  maybeShowLogoutPopup();
+}
+
+function logout(){
+  user = null;
+  localStorage.removeItem("osis_user");
+  document.getElementById("inpNama").value = "";
+  document.getElementById("inpKelas").value = "";
+  // pastikan semua popup ikut tertutup, tanpa perlu refresh
+  document.getElementById("modalLogout").classList.add("hidden");
+  document.getElementById("modalSuccess").classList.add("hidden");
+  document.getElementById("modal").classList.add("hidden");
+  show("screen-login");
+}
+
+async function refreshStatus(){
+  const res = await apiGet({ action:"checkVoter", nama:user.nama, kelas:user.kelas });
+  if(res.ok){
+    voteStatus.votedKetua = !!res.votedKetua;
+    voteStatus.votedWakil = !!res.votedWakil;
+  }
+}
+
+function renderMenu(){
+  document.getElementById("whoName").textContent = user.nama;
+  document.getElementById("whoKelas").textContent = user.kelas;
+
+  const btnK = document.getElementById("btnKetua");
+  const btnW = document.getElementById("btnWakil");
+  document.getElementById("subKetua").textContent = voteStatus.votedKetua ? "✓ Sudah memilih" : "Belum memilih";
+  document.getElementById("subWakil").textContent = voteStatus.votedWakil ? "✓ Sudah memilih" : "Belum memilih";
+  btnK.classList.toggle("done", voteStatus.votedKetua);
+  btnW.classList.toggle("done", voteStatus.votedWakil);
+  btnK.onclick = voteStatus.votedKetua ? null : ()=>openCandidates("ketua");
+  btnW.onclick = voteStatus.votedWakil ? null : ()=>openCandidates("wakil");
+}
+
+function maybeShowLogoutPopup(){
+  if(voteStatus.votedKetua && voteStatus.votedWakil){
+    document.getElementById("modalLogout").classList.remove("hidden");
+  }
+}
+
+function showMenu(){
+  renderMenu();
+  show("screen-menu");
+}
+
+function initials(name){
+  return name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
+}
+
+async function openCandidates(type){
+  if((type==="ketua" && voteStatus.votedKetua) || (type==="wakil" && voteStatus.votedWakil)) return;
+  currentType = type;
+  document.getElementById("candTitle").textContent =
+    type==="ketua" ? "Kandidat Ketua OSIS" : "Kandidat Wakil Ketua OSIS";
+  const listEl = document.getElementById("candList");
+  listEl.innerHTML = '<div class="loading">Memuat kandidat...</div>';
+  show("screen-candidates");
+
+  const res = await apiGet({ action:"getCandidates", type });
+  if(!res.ok || !res.data || !res.data.length){
+    listEl.innerHTML = '<div class="loading">Belum ada kandidat terdaftar.</div>';
+    return;
+  }
+  listEl.innerHTML = "";
+  res.data.forEach(c=>{
+    const card = document.createElement("div");
+    card.className = "cand-card";
+    const avatar = c.foto
+      ? `<img class="avatar" src="${c.foto}" alt="${c.nama}">`
+      : `<div class="avatar">${initials(c.nama)}</div>`;
+    card.innerHTML = `
+      ${avatar}
+      <div class="cand-name">${c.nama}</div>
+      <div class="cand-kelas">${c.kelas}</div>
+      <button class="btn-pilih">Pilih Saya</button>
+    `;
+    card.querySelector(".btn-pilih").onclick = ()=>askConfirm(c);
+    listEl.appendChild(card);
+  });
+}
+
+function askConfirm(cand){
+  pendingCandidate = cand;
+  const label = currentType==="ketua" ? "Ketua OSIS" : "Wakil Ketua OSIS";
+  document.getElementById("modalText").textContent =
+    `Apakah Anda yakin memilih ${cand.nama} (${cand.kelas}) sebagai ${label}?`;
+  document.getElementById("modal").classList.remove("hidden");
+}
+
+function closeModal(){
+  // Batal: tutup modal, tetap di halaman daftar kandidat
+  pendingCandidate = null;
+  document.getElementById("modal").classList.add("hidden");
+}
+
+async function confirmVote(){
+  if(!pendingCandidate) return;
+  const cand = pendingCandidate;
+  document.getElementById("modal").classList.add("hidden");
+
+  const res = await apiGet({
+    action:"vote", type:currentType,
+    nama:user.nama, kelas:user.kelas, kandidatId:cand.id
+  });
+
+  if(res.ok){
+    if(currentType==="ketua") voteStatus.votedKetua = true;
+    else voteStatus.votedWakil = true;
+    pendingCandidate = null;
+    document.getElementById("modalSuccess").classList.remove("hidden");
+  }else{
+    alert(res.message || "Gagal menyimpan suara. Coba lagi.");
+    await refreshStatus();
+    showMenu();
+  }
+}
+
+function closeSuccessModal(){
+  document.getElementById("modalSuccess").classList.add("hidden");
+  showMenu();          // otomatis kembali ke beranda untuk lanjut memilih
+  maybeShowLogoutPopup();
+}
+
+// Coba lanjutkan sesi login sebelumnya (misal setelah refresh halaman)
+(async function init(){
+  const saved = localStorage.getItem("osis_user");
+  if(saved){
+    user = JSON.parse(saved);
+    if(GAS_URL.indexOf("PASTE_URL") === -1){
+      await refreshStatus();
+      renderMenu();
+      show("screen-menu");
+      maybeShowLogoutPopup();
+      return;
+    }
+  }
+  show("screen-login");
+})();
+</script>
+
+</body>
+</html>
